@@ -52,7 +52,8 @@
     });
 
     messageForm.addEventListener('submit', (e) => {
-      e.preventDefault();
+      e.preventDefault(); 
+      
       const text = messageInput.value.trim();
       
       if (text) {
@@ -60,6 +61,7 @@
         messageInput.value = '';
       }
     });
+
   </script>
 </body>
 </html>
