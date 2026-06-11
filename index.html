@@ -30,38 +30,41 @@
       <button type="submit">Send</button>
     </form>
   </div>
-  <script src="https://socket.io"></script>
-  <script>
-    let username = prompt("Please enter your username to join the chat：") || "Anonymous";
-    const socket = io("https://chat-dwsb.onrender.com/");
+<script src="https://socket.io"></script>
+<script>
+    // Check if a username is already saved in the browser's local memory
+    let username = localStorage.getItem("chat_username");
+    
+    if (!username) {
+        username = prompt("Please enter your username to join the chat：") || "Anonymous";
+        localStorage.setItem("chat_username", username); // Save it
+    }
 
+    const socket = io("https://chat-dwsb.onrender.com/");
     const chatBox = document.getElementById('chat-box');
     const messageForm = document.getElementById('message-form');
     const messageInput = document.getElementById('message-input');
+
     socket.on('receive_message', (data) => {
-      const messageWrapper = document.createElement('div');
-      messageWrapper.style.marginBottom = "12px";
-      
-      messageWrapper.innerHTML = `
-        <span class="username" style="margin-bottom: 4px; display: block;">${data.user}</span>
-        <div class="msg">${data.text}</div>
-      `;
-      
-      chatBox.appendChild(messageWrapper);
-      chatBox.scrollTop = chatBox.scrollHeight; 
+        const messageWrapper = document.createElement('div');
+        messageWrapper.style.marginBottom = "12px";
+        messageWrapper.innerHTML = `
+            <span class="username" style="margin-bottom: 4px; display: block;">${data.user}</span>
+            <div class="msg">${data.text}</div>
+        `;
+        chatBox.appendChild(messageWrapper);
+        chatBox.scrollTop = chatBox.scrollHeight;
     });
 
     messageForm.addEventListener('submit', (e) => {
-      e.preventDefault(); 
-      
-      const text = messageInput.value.trim();
-      
-      if (text) {
-        socket.emit('send_message', { user: username, text: text });
-        messageInput.value = '';
-      }
+        e.preventDefault();
+        const text = messageInput.value.trim();
+        if (text) {
+            socket.emit('send_message', { user: username, text: text });
+            messageInput.value = '';
+        }
     });
+</script>
 
-  </script>
 </body>
 </html>
